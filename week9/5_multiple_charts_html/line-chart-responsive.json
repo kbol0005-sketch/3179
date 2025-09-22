@@ -1,0 +1,37 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "url": "seattle-weather.csv"
+  },
+  "width": "container",
+  "transform": [
+    {
+      "calculate": "datum.temp_max - datum.temp_min",
+      "as": "temp_range"
+    }
+  ],
+  "mark": {
+    "type": "line",
+    "interpolate": "monotone"
+  },
+  "encoding": {
+    "x": {
+      "field": "date",
+      "timeUnit": "month",
+      "title":null
+    },
+    "y": {
+      "field": "temp_range",
+      "aggregate": "mean",
+      "title": "Mean of Temperature"
+    },
+    "color": {
+      "timeUnit": "year",
+      "type": "nominal",
+      "field": "date",
+      "title": "Year",
+      "legend":{"orient": "none", "legendX":10, "legendY":5}
+    }
+  },
+  "config": {}
+}
