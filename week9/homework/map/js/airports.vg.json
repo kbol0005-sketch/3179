@@ -69,6 +69,7 @@
         "tooltip": [
           {"field": "properties.origin", "title": "Origin"},
           {"field": "properties.destination", "title": "Destination"},
+          {"field": "properties.distance_km", "title": "Distance(km)","format": ".0f" },
           {"field": "properties.passengers", "title": "Passengers", "format": ","},
           {"field": "properties.flights", "title": "Flights", "format": ","},
           {"field": "properties.lf", "title": "Load Factor", "format": ".0%"},
