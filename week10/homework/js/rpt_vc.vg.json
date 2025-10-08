@@ -1,0 +1,70 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Domestic RPT passenger traffic (moving annual totals)",
+   "width": 750,
+  "height": 420,
+  "data": {
+    "url": "../data/aggregated_domestic_flights.csv",
+    "format": {
+      "type": "csv",
+      "parse": {"Passengers": "number", "Year": "number"}
+    }
+  },
+  "transform": [
+    {"calculate": "datum.Passengers / 1e6", "as": "Passengers_M"}
+  ],
+  "mark": {
+    "type": "line",
+    "color": "#66bd63",
+    "strokeWidth": 3,
+    "interpolate": "monotone"
+  },
+  "encoding": {
+    "x": {
+      "field": "Year",
+      "type": "quantitative",
+      "scale": {"domain": [2015, 2024], "nice": false},
+      "axis": {
+        "title": null,
+        "tickMinStep": 1,
+        "format": "d",
+        "labelAngle": 0,
+        "labelFontSize": 12,
+        "labelPadding": 5,
+        "grid": false,
+        "domain": true,
+        "domainColor": "#333333",
+        "domainWidth": 1.5
+      }
+    },
+    "y": {
+      "field": "Passengers_M",
+      "type": "quantitative",
+      "scale": {"domain": [0, 70]},
+      "axis": {
+        "title": "Total passengers carried (millions)",
+        "values": [0, 10, 20, 30, 40, 50, 60, 70],
+        "titleFontSize": 14,
+        "labelFontSize": 12,
+        "labelPadding": 6,
+        "titlePadding": 12,
+        "grid": true,
+        "gridColor": "#e0e0e0",
+        "domain": false
+      }
+    },
+     "tooltip": [
+    {"field": "Year", "type": "quantitative", "format": "d"},
+    {"field": "Passengers_M", "type": "quantitative", "format": ".2f", "title": "Passengers (millions)"}
+  ]
+  },
+  "config": {
+    "background": "white",
+    "axis": {
+      "tickColor": "lightgray",
+      "labelFont": "Arial",
+      "titleFont": "Arial"
+    },
+    "view": {"stroke": "transparent"}
+  }
+}

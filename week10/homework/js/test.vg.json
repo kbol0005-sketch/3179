@@ -1,0 +1,32 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 400,
+  "height": 200,
+
+  "layer": [
+    {
+      "data": {
+        "values": [
+          {"x1": 0, "x2": 15, "y_bottom": 536, "y_top": 534},
+          {"x1": 15, "x2": 30, "y_bottom": 534, "y_top": 531},
+          {"x1": 30, "x2": 45, "y_bottom": 532, "y_top": 528},
+          {"x1": 45, "x2": 60, "y_bottom": 530, "y_top": 525},
+          {"x1": 60, "x2": 75, "y_bottom": 528, "y_top": 522},
+          {"x1": 75, "x2": 90, "y_bottom": 526, "y_top": 519}
+        ]
+      },
+      "mark": {"type": "rect", "fill": "#555"},
+      "encoding": {
+        "x": {"field": "x1", "type": "quantitative"},
+        "x2": {"field": "x2"},
+        "y": {"field": "y_bottom", "type": "quantitative"},
+        "y2": {"field": "y_top", "type": "quantitative"}
+      }
+    }
+  ],
+
+  "config": {
+    "view": {"stroke": null},
+    "axis": {"domain": false, "grid": false, "labels": false, "ticks": false}
+  }
+}
