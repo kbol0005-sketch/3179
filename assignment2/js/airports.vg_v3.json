@@ -1,0 +1,433 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "params": [
+    {
+      "name": "Min_Passenger_Traffic",
+      "value": 0,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 8000000,
+        "step": 200000,
+        "name": "Minimum Passenger Traffic: "
+      }
+    },
+    {
+      "name": "Change_Filter",
+      "value": "All",
+      "bind": {
+        "input": "select",
+        "options": [
+          "All",
+          "Decrease > 15%",
+          "Decrease > 5%",
+          "Increase > 5%",
+          "Increase > 15%"
+        ],
+        "name": "Traffic Change vs 2019: "
+      }
+    }
+  ],
+  "vconcat": [
+    {
+      "title": "Australian Air Routes (Map)",
+      "width": 800,
+      "height": 600,
+      "projection": {"type": "mercator"},
+      "layer": [
+      {
+        "params": [
+          {
+            "name": "routeSelect",
+            "select": {"type": "point", "fields": ["city_pair"]}
+          }
+        ],
+        "data": {
+          "url": "./js/australia_states.topojson",
+          "format": {
+            "type": "topojson",
+            "feature": "ne_50m_admin_1_states_provinces"
+          }
+        },
+        "mark": {
+          "type": "geoshape",
+          "fill": "#f7f3e9",
+          "stroke": "#333333",
+          "strokeOpacity": 1,
+          "strokeWidth": 0.3
+        }
+      },
+      {
+        "data": {
+          "url": "./js/australia_states.topojson",
+          "format": {
+            "type": "topojson",
+            "feature": "ne_50m_admin_1_states_provinces"
+          }
+        },
+        "transform": [
+          {
+            "calculate": "datum.properties.name === 'Australian Capital Territory' ? 'ACT' : datum.properties.name",
+            "as": "state_label"
+          }
+        ],
+        "mark": {"type": "text", "fontSize": 10, "color": "#a6a6a6"},
+        "encoding": {
+          "longitude": {"field": "properties.longitude"},
+          "latitude": {"field": "properties.latitude"},
+          "text": {"field": "state_label"}
+        }
+      },
+      {
+        "data": {
+          "url": "./australia_routes_lines.geojson",
+          "format": {"type": "json", "property": "features"}
+        },
+        "transform": [
+          {"filter": "datum.properties.passengers > Min_Passenger_Traffic"},
+          {
+            "filter": "Change_Filter == 'All' || (Change_Filter == 'Decrease > 15%' && datum.properties.change <= -0.15) || (Change_Filter == 'Decrease > 5%' && datum.properties.change <= -0.05) || (Change_Filter == 'Increase > 5%' && datum.properties.change >= 0.05) || (Change_Filter == 'Increase > 15%' && datum.properties.change >= 0.15)"
+          },
+          {"calculate": "datum.properties.city_pair", "as": "city_pair"}
+        ],
+        "mark": {
+          "type": "geoshape",
+          "strokeOpacity": 0.3,
+          "stroke": "black",
+          "strokeWidth": 0.3
+        },
+        "encoding": {
+          "color": {
+            "field": "properties.change",
+            "type": "quantitative",
+            "scale": {
+              "type": "threshold",
+              "domain": [-0.15, -0.05, 0.05, 0.15],
+              "range": ["#d73027", "#ef8a62", "#92c5de", "#66bd63", "#1a9850"]
+            },
+            "title": "Change vs 2019",
+            "legend": null
+          },
+          "tooltip": [
+            {"field": "city_pair", "title": "Route"},
+            {"field": "properties.origin", "title": "Origin"},
+            {"field": "properties.destination", "title": "Destination"},
+            {"field": "properties.distance_km", "title": "Distance (km)", "format": ".0f"},
+            {"field": "properties.passengers", "title": "Passengers", "format": ","},
+            {"field": "properties.flights", "title": "Flights", "format": ","},
+            {"field": "properties.lf", "title": "Load Factor", "format": ".0%"},
+            {"field": "properties.change", "title": "Traffic Change", "format": ".0%"}
+          ]
+        }
+      },
+      {
+        "data": {
+          "url": "./js/australia_airports.topojson",
+          "format": {"type": "topojson", "feature": "ne_10m_airports"}
+        },
+        "mark": {
+          "type": "circle",
+          "color": "#1f78b4",
+          "stroke": "#333333",
+          "strokeWidth": 0.3,
+          "size": 60
+        },
+        "encoding": {
+          "longitude": {"field": "properties.LON"},
+          "latitude": {"field": "properties.LAT"},
+          "tooltip": [
+            {"field": "properties.name", "title": "Airport"},
+            {"field": "properties.iata_code", "title": "IATA"}
+          ]
+        }
+      },
+      {
+        "data": {
+          "url": "./js/australia_airports.topojson",
+          "format": {"type": "topojson", "feature": "ne_10m_airports"}
+        },
+        "transform": [
+          {
+            "lookup": "properties.iata_code",
+            "from": {
+              "data": {
+                "values": [
+                  {"iata": "SYD", "city": "Sydney", "dx": 9, "dy": -1},
+                  {"iata": "MEL", "city": "Melbourne", "dx": -10, "dy": -3},
+                  {"iata": "BNE", "city": "Brisbane", "dx": 11, "dy": 1},
+                  {"iata": "OOL", "city": "Gold Coast", "dx": 12, "dy": -1},
+                  {"iata": "ADL", "city": "Adelaide", "dx": -9, "dy": -3},
+                  {"iata": "PER", "city": "Perth", "dx": -8, "dy": 0},
+                  {"iata": "HBA", "city": "Hobart", "dx": 9, "dy": -1},
+                  {"iata": "CBR", "city": "Canberra", "dx": 0, "dy": -4},
+                  {"iata": "CNS", "city": "Cairns", "dx": 9, "dy": 0},
+                  {"iata": "DRW", "city": "Darwin", "dx": -9, "dy": 0}
+                ]
+              },
+              "key": "iata",
+              "fields": ["city", "dx", "dy"]
+            }
+          },
+          {"calculate": "datum.properties.LON + datum.dx*0.2", "as": "LON_shift"},
+          {"calculate": "datum.properties.LAT + datum.dy*0.2", "as": "LAT_shift"}
+        ],
+        "mark": {"type": "text", "fontSize": 12, "color": "#555555", "fontWeight": "bold"},
+        "encoding": {
+          "longitude": {"field": "LON_shift"},
+          "latitude": {"field": "LAT_shift"},
+          "text": {"field": "city"}
+        }
+      },
+      {
+        "projection": null,
+        "layer": [
+          {
+            "data": {"values": [{"label": "Passenger Traffic"}]},
+            "mark": {
+              "type": "text",
+              "x": 80,
+              "y": 497,
+              "align": "left",
+              "fontSize": 12,
+              "fontWeight": "bold",
+              "color": "#555555"
+            },
+            "encoding": {"text": {"field": "label"}}
+          },
+          {
+            "data": {
+              "values": [
+                {"x": 8, "label": "0.5M"},
+                {"x": 23, "label": "1M"},
+                {"x": 39, "label": "2M"},
+                {"x": 55, "label": "3M"},
+                {"x": 71, "label": "5M"},
+                {"x": 87, "label": "10M"}
+              ]
+            },
+            "mark": {"type": "text", "baseline": "top", "dy": 5, "fontSize": 11, "color": "#444444"},
+            "encoding": {
+              "x": {
+                "field": "x",
+                "type": "quantitative",
+                "scale": {"domain": [0, 150], "range": [80, 380]},
+                "axis": null
+              },
+              "y": {"value": 523},
+              "text": {"field": "label"},
+              "align": {"value": "center"}
+            }
+          },
+          {
+            "data": {"values": [{"label": "Traffic Change vs 2019"}]},
+            "mark": {
+              "type": "text",
+              "x": 80,
+              "y": 564,
+              "align": "left",
+              "fontSize": 12,
+              "fontWeight": "bold",
+              "color": "#555555"
+            },
+            "encoding": {"text": {"field": "label"}}
+          },
+          {
+            "data": {
+              "values": [
+                {"x1": 0, "x2": 19, "color": "#d73027"},
+                {"x1": 19, "x2": 38, "color": "#ef8a62"},
+                {"x1": 38, "x2": 57, "color": "#92c5de"},
+                {"x1": 57, "x2": 76, "color": "#66bd63"},
+                {"x1": 76, "x2": 95, "color": "#1a9850"}
+              ]
+            },
+            "mark": {"type": "rect", "height": 10},
+            "encoding": {
+              "x": {
+                "field": "x1",
+                "type": "quantitative",
+                "scale": {"domain": [0, 150], "range": [80, 380]},
+                "axis": null
+              },
+              "x2": {
+                "field": "x2",
+                "type": "quantitative",
+                "scale": {"domain": [0, 150], "range": [80, 380]}
+              },
+              "y": {"value": 582},
+              "color": {
+                "field": "color",
+                "type": "nominal",
+                "legend": null,
+                "scale": {
+                  "domain": ["#d73027", "#ef8a62", "#92c5de", "#66bd63", "#1a9850"],
+                  "range": ["#d73027", "#ef8a62", "#92c5de", "#66bd63", "#1a9850"]
+                }
+              }
+            }
+          },
+          {
+            "data": {
+              "values": [
+                {"x": 19, "label": "-15%"},
+                {"x": 38, "label": "-5%"},
+                {"x": 57, "label": "5%"},
+                {"x": 76, "label": "15%"}
+              ]
+            },
+            "mark": {"type": "text", "baseline": "top", "dy": 5, "fontSize": 11, "color": "#444444"},
+            "encoding": {
+              "x": {
+                "field": "x",
+                "type": "quantitative",
+                "scale": {"domain": [0, 150], "range": [80, 380]},
+                "axis": null
+              },
+              "y": {"value": 589},
+              "text": {"field": "label"},
+              "align": {"value": "center"}
+            }
+          },
+          {
+            "data": {
+              "values": [
+                {"x1": 0, "x2": 15, "y_bottom": 84, "y_top": 86},
+                {"x1": 16, "x2": 31, "y_bottom": 83.5, "y_top": 86.5},
+                {"x1": 32, "x2": 47, "y_bottom": 83, "y_top": 87},
+                {"x1": 48, "x2": 63, "y_bottom": 82.5, "y_top": 87.5},
+                {"x1": 64, "x2": 79, "y_bottom": 81, "y_top": 89},
+                {"x1": 80, "x2": 95, "y_bottom": 79.5, "y_top": 90.5}
+              ]
+            },
+            "mark": {"type": "rect", "fill": "#888"},
+            "encoding": {
+              "x": {"field": "x1", "type": "quantitative", "axis": null},
+              "x2": {"field": "x2"},
+              "y": {
+                "field": "y_bottom",
+                "type": "quantitative",
+                "scale": {"domain": [0, 600], "range": [600, 0]},
+                "axis": null
+              },
+              "y2": {"field": "y_top", "type": "quantitative"}
+            }
+          }
+        ]
+      }
+    ]
+    },
+
+
+{
+  "title": "Passenger Trends by Year",
+  "data": {"url": "../data/routes_history.csv"},
+
+  "transform": [
+    {
+      "fold": [
+        "2024", "2023", "2022", "2021", "2020",
+        "2019", "2018", "2017", "2016", "2015"
+      ],
+      "as": ["year", "passengers"]
+    },
+    {
+      "calculate": "replace(datum.passengers, ',', '')",
+      "as": "passengers_clean"
+    },
+    {
+      "calculate": "toNumber(datum.passengers_clean)",
+      "as": "passengers_num"
+    },
+    {"filter": {"param": "routeSelect"}},
+    {
+      "aggregate": [
+        {"op": "sum", "field": "passengers_num", "as": "total_passengers"}
+      ],
+      "groupby": ["year"]
+    }
+  ],
+
+  "width": 750,
+  "height": 420,
+
+  "mark": {
+    "type": "bar",
+    "cornerRadiusEnd": 3
+  },
+
+  "encoding": {
+    "x": {
+      "field": "year",
+      "type": "ordinal",
+      "sort": "descending",
+      "axis": {
+        "title": null,
+        "labelAngle": 0,
+        "labelFontSize": 12,
+        "labelPadding": 5,
+        "grid": false,
+        "domain": true,
+        "domainColor": "#555555",
+        "domainWidth": 1,
+        "ticks": false
+      }
+    },
+
+    "y": {
+      "field": "total_passengers",
+      "type": "quantitative",
+      "scale": {"type": "log", "domain": [1e5, 1e7]},
+      "axis": {
+        "title": "Passengers (log scale)",
+        "titleFontSize": 14,
+        "labelFontSize": 12,
+        "labelPadding": 6,
+        "titlePadding": 12,
+        "grid": true,
+        "gridColor": "#e0e0e0",
+        "domain": false,
+        "ticks": false,
+        "values": [100000, 250000, 500000, 1000000, 2300000, 5000000, 10000000],
+        "labelExpr": "{'100000':'100K','250000':'250K','500000':'500K','1000000':'1M','2300000':'2.5M','5000000':'5M','10000000':'10M'}[datum.value]"
+      }
+    },
+
+    "color": {
+      "condition": [
+        {
+          "test": "datum.year == '2024' || datum.year == '2019'",
+          "value": "#f0a800"
+        }
+      ],
+      "value": "#1f77b4"
+    },
+
+    "tooltip": [
+      {"field": "year", "title": "Year"},
+      {
+        "field": "total_passengers",
+        "title": "Passengers",
+        "format": ",.0f"
+      }
+    ]
+  },
+
+  "config": {
+    "background": "white",
+    "axis": {
+      "tickColor": "lightgray",
+      "labelFont": "Arial",
+      "titleFont": "Arial"
+    },
+    "view": {"stroke": "transparent"}
+  }
+}
+
+
+
+
+
+
+  ],
+  "config": {"view": {"stroke": null}, "background": "white"}
+}
