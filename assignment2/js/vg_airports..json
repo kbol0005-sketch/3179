@@ -56,7 +56,7 @@
       "type": "quantitative",
       "scale": {"domain": [0, 50]},
       "axis": {
-        "title": "Passenger Traffic (millions)",
+        "title": "Passengers (millions)",
         "values": [10, 20, 30, 40, 50],
         "titleFontSize": 13,
         "labelFontSize": 12,
@@ -109,3 +109,4 @@
     }
   }
 }
+
