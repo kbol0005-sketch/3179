@@ -15,7 +15,7 @@
   },
 
   "data": {
-    "url": "../data/aggregated_domestic_flights.csv",
+    "url": "./data/aggregated_domestic_flights.csv",
     "format": {
       "type": "csv",
       "parse": {

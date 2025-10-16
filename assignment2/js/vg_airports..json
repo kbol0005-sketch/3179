@@ -15,7 +15,7 @@
   },
 
   "data": {
-    "url": "../data/airports_traffic.csv",
+    "url": "./data/airports_traffic.csv",
     "format": {
       "type": "csv",
       "parse": {"Year": "number", "Passengers": "number"}
