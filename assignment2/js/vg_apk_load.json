@@ -1,0 +1,149 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Domestic capacity utilisation – ASK composition (used vs unused) and load factor, 2015–2024",
+  "width": 600,
+  "height": 250,
+
+  "title": {
+    "text": "Demestic Flights Capacity Utilization and Load Factor Trends",
+    "font": "Arial",
+    "fontSize": 14,
+    "fontWeight": "bold",
+    "color": "#333333",
+    "anchor": "middle",
+    "offset": 10
+  },
+
+  "data": {
+    "url": "../data/aggregated_domestic_flights.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "Year": "number",
+        "Available_Seat_km": "number",
+        "Load_Factor": "number"
+      }
+    }
+  },
+
+  "transform": [
+    {"calculate": "datum.Available_Seat_km / 1e9", "as": "ASK_B"},
+    {"calculate": "datum.ASK_B * datum.Load_Factor / 100", "as": "Used_ASK"},
+    {"calculate": "datum.ASK_B - datum.Used_ASK", "as": "Unused_ASK"},
+    {"fold": ["Used_ASK", "Unused_ASK"], "as": ["Type", "Value"]},
+    {
+      "calculate": "datum.Type == 'Used_ASK' ? 'Used ASK' : 'Unused ASK'",
+      "as": "TypeLabel"
+    }
+  ],
+
+  "layer": [
+    {
+      "mark": {"type": "bar", "opacity": 1, "size": 40},
+      "encoding": {
+        "x": {
+          "field": "Year",
+          "type": "ordinal",
+          "axis": {
+            "title": null,
+            "labelAngle": 0,
+            "labelFontSize": 12,
+            "tickMinStep": 1,
+            "format": "d",
+            "domain": true,
+            "domainColor": "#333333",
+            "domainWidth": 1,
+            "grid": false,
+            "labelPadding": 4
+          }
+        },
+        "y": {
+          "aggregate": "sum",
+          "field": "Value",
+          "type": "quantitative",
+          "scale": {"domain": [0, 100]},
+          "axis": {
+            "title": "Available Seat-km (billions)",
+            "values": [20, 40, 60, 80],
+            "titleFontSize": 14,
+            "labelFontSize": 12,
+            "labelPadding": 6,
+            "titlePadding": 12,
+            "grid": true,
+            "gridColor": "#e0e0e0",
+            "domain": false
+          }
+        },
+        "color": {
+          "field": "Type",
+          "type": "nominal",
+          "scale": {
+            "domain": ["Used_ASK", "Unused_ASK"],
+            "range": ["#3182bd", "#cfe2f3"] 
+          },
+          "legend": {
+            "title": null,
+            "orient": "bottom",
+            "direction": "horizontal",
+            "symbolSize": 300,
+            "symbolStrokeWidth": 2,
+            "labelFontSize": 12,
+            "labelExpr": "datum.label == 'Used_ASK' ? 'Used Capacity' : 'Unused Capacity'"
+          }
+        },
+        "tooltip": [
+          {"field": "Year", "format": "d"},
+          {"field": "TypeLabel", "title": "Category"},
+          {"field": "Value", "title": "ASK (billions)", "format": ".1f"}
+        ]
+      }
+    },
+
+    {
+      "mark": {
+        "type": "line",
+        "color": "#f4a582",
+        "strokeWidth": 2.5,
+        "interpolate": "monotone",
+        "opacity": 0.7,
+        "point": {"filled": true, "fill": "#f4a582", "size": 50}
+      },
+      "encoding": {
+        "x": {"field": "Year", "type": "ordinal"},
+        "y": {
+          "field": "Load_Factor",
+          "type": "quantitative",
+          "scale": {"domain": [45, 100]},
+          "axis": {
+            "title": "Load Factor (%)",
+            "orient": "right",
+            "values": [56, 67, 78, 89],
+            "titleFontSize": 14,
+            "labelFontSize": 12,
+            "titlePadding": 12,
+            "grid": false,
+            "domain": false,
+            "ticks": false,
+            "labelPadding": 8
+          }
+        },
+        "tooltip": [
+          {"field": "Year", "format": "d"},
+          {"field": "Load_Factor", "title": "Load Factor (%)", "format": ".1f"}
+        ]
+      }
+    }
+  ],
+
+  "resolve": {"scale": {"y": "independent"}},
+
+  "config": {
+    "background": "white",
+    "view": {"stroke": null},
+    "axis": {
+      "tickColor": "lightgray",
+      "labelFont": "Arial",
+      "titleFont": "Arial"
+    }
+  }
+}

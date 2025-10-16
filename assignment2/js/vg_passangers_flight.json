@@ -1,0 +1,158 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Domestic aircraft trips (000s) and passenger traffic (millions), 2015–2024",
+  "width": 600,
+  "height": 250,
+
+   "title": {
+    "text": "Domestic Aircraft Trips and Passenger Traffic",
+    "font": "Arial",
+    "fontSize": 14,
+    "fontWeight": "bold",
+    "color": "#333333",
+    "anchor": "middle",
+    "offset": 15
+  },
+
+    
+  "data": {
+    "url": "../data/aggregated_domestic_flights.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "Year": "number",
+        "Passengers": "number",
+        "Aircraft_Trips": "number"
+      }
+    }
+  },
+  "transform": [
+    {"calculate": "datum.Aircraft_Trips / 1000", "as": "AircraftTripsK"},
+    {"calculate": "datum.Passengers / 1e6", "as": "PassengersM"},
+    {
+      "fold": ["AircraftTripsK", "PassengersM"],
+      "as": ["Metric", "Value"]
+    },
+    {
+      "calculate": "datum.Metric === 'AircraftTripsK' ? 'Aircraft Trips (000s)' : 'Passenger Traffic (millions)'",
+      "as": "MetricLabel"
+    }
+  ],
+  "layer": [
+    {
+      "transform": [{"filter": "datum.Metric === 'AircraftTripsK'"}],
+      "mark": {
+        "type": "line",
+        "interpolate": "monotone",
+        "strokeWidth": 3,
+        "point": {"filled": true, "size": 60}
+      },
+      "encoding": {
+        "x": {
+          "field": "Year",
+          "type": "quantitative",
+          "scale": {"domain": [2014.8, 2024.2], "nice": false},
+          "axis": {
+            "title": null,
+            "tickMinStep": 1,
+            "format": "d",
+            "labelAngle": 0,
+            "labelFontSize": 12,
+            "labelPadding": 4,
+            "domainColor": "#333",
+            "domainWidth": 1,
+            "grid": false
+          }
+        },
+        "y": {
+          "field": "Value",
+          "type": "quantitative",
+          "scale": {"domain": [50, 670]},
+          "axis": {
+            "title": "Aircraft Trips (000s)",
+            "values": [150, 250, 350, 450, 550, 650],
+            "titleFontSize": 13,
+            "labelFontSize": 12,
+            "labelPadding": 6,
+            "titlePadding": 12,
+            "grid": true,
+            "gridColor": "#e0e0e0",
+            "domain": false
+          }
+        },
+        "color": {
+          "field": "MetricLabel",
+          "type": "nominal",
+          "scale": {
+            "domain": ["Aircraft Trips (000s)", "Passenger Traffic (millions)"],
+            "range": ["#4393c3", "#f4a582"]
+          },
+          "legend": {
+            "title": null,
+            "orient": "bottom",
+            "direction": "horizontal",
+            "symbolSize": 250,
+            "symbolStrokeWidth": 3,
+            "labelFontSize": 12,
+            "labelFont": "Arial",
+            "labelExpr": "datum.label === 'Aircraft Trips (000s)' ? 'Aircraft Trips' : 'Passenger Traffic'",
+            "padding": 0
+          }
+        },
+        "tooltip": [
+          {"field": "Year", "format": "d"},
+          {"field": "MetricLabel", "title": "Metric"},
+          {"field": "Value", "title": "Value", "format": ".2f"}
+        ]
+      }
+    },
+    {
+      "transform": [{"filter": "datum.Metric === 'PassengersM'"}],
+      "mark": {
+        "type": "line",
+        "interpolate": "monotone",
+        "strokeWidth": 3,
+        "point": {"filled": true, "size": 60}
+      },
+      "encoding": {
+        "x": {"field": "Year", "type": "quantitative"},
+        "y": {
+          "field": "Value",
+          "type": "quantitative",
+          "scale": {"domain": [5, 67]},
+          "axis": {
+            "title": "Passenger Traffic (millions)",
+            "orient": "right",
+            "values": [15, 25, 35, 45, 55, 65],
+            "titleFontSize": 14,
+            "labelFontSize": 12,
+            "labelPadding": 6,
+            "titlePadding": 12,
+            "grid": false,
+            "domain": false
+          }
+        },
+        "color": {
+          "field": "MetricLabel",
+          "type": "nominal",
+          "scale": {
+            "domain": ["Aircraft Trips (000s)", "Passenger Traffic (millions)"],
+            "range": ["#3182bd", "#f4a582"]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {"field": "Year", "format": "d"},
+          {"field": "MetricLabel", "title": "Metric"},
+          {"field": "Value", "title": "Value", "format": ".2f"}
+        ]
+      }
+    }
+  ],
+  "resolve": {"scale": {"y": "independent"}},
+  "config": {
+    "background": "white",
+    "view": {"stroke": null},
+    "axis": {"tickColor": "lightgray", "labelFont": "Arial", "titleFont": "Arial"}
+  }
+}

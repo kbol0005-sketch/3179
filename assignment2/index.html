@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Australia’s Domestic Air Travel Recovery After COVID-19</title>
+
+  <!-- Vega stack -->
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+  <!-- Pure.css -->
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Template CSS -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- Page Title -->
+    <div class="pure-g">
+      <div class="pure-u-1">
+         <h2 style="text-align:center;">Australia’s Domestic Air Travel Recovery After COVID-19</h2>
+      </div>
+    </div>
+
+    <!-- Row 1: Commentary above map -->
+    <div class="pure-g">
+      <div class="pure-u-1-1">
+        <div class="description description-left">
+          <p>Australia’s domestic air network connects key hubs such as Sydney, Melbourne, and Brisbane with regional destinations across the country. The visualisation below integrates an interactive map and route-level passenger trends to illustrate how traffic volumes have evolved between 2019 and 2024. We focus on comparing these two years as representative pre- and post-pandemic benchmarks, since the early post-pandemic period (2021–2023) remained distorted by gradual reopenings, capacity constraints, and uneven demand recovery.</p>
+          <p>While most domestic routes experienced passenger changes within a normal range, some major corridors showed pronounced swings of up to ±30%. These substantial increases and decreases highlight how travel behaviour shifted in the wake of the pandemic patterns that readers can explore further using the interactive filters and traffic-change categories below.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Map -->
+    <div class="pure-g">
+      <div class="pure-u-1-1">
+        <div id="vis_routes" class="vis-container"></div>
+      </div>
+    </div>    
+
+    <!-- ROW 4: Descriptive Text Below -->
+    <div class="pure-g">
+      <div class="pure-u-1">
+        <div class="description description-left">
+         <p>Available Seat Kilometres (ASKs), Revenue Passenger Kilometres (RPKs), and Load Factors (LF) show how much capacity airlines supply and how effectively it’s used. The sharp dip in 2020 reflects the pandemic’s impact on domestic travel, followed by a strong rebound from 2021 onward.</p>
+        </div>
+      </div>
+    </div>
+
+   <!-- ROW 3: Domestic Aircraft Trips and Passenger Traffic -->
+   <div class="pure-g">
+    <div class="pure-u-1-1" style="text-align: center;">
+      <div id="vis_passangers_flight" class="vis-container" style="display: inline-block;"></div>
+    </div>
+  </div>
+
+
+    <!-- ROW 4: Descriptive Text Below -->
+    <div class="pure-g">
+      <div class="pure-u-1">
+        <div class="description description-left">
+         <p>Available Seat Kilometres (ASKs), Revenue Passenger Kilometres (RPKs), and Load Factors (LF) show how much capacity airlines supply and how effectively it’s used. The sharp dip in 2020 reflects the pandemic’s impact on domestic travel, followed by a strong rebound from 2021 onward.</p>
+        </div>
+      </div>
+    </div>
+
+     <!-- ROW 5: Demestic Flights Capacity Utilization and Load Factor Trends -->
+    <div class="pure-g">
+      <div class="pure-u-1-1" style="text-align: center;">
+        <div id="vis_apk_load" class="vis-container"></div>
+      </div>
+    </div>
+
+    <!-- ROW 6: Descriptive Text Below -->
+    <div class="pure-g">
+      <div class="pure-u-1">
+        <div class="description description-left">
+         <p>Available Seat Kilometres (ASKs), Revenue Passenger Kilometres (RPKs), and Load Factors (LF) show how much capacity airlines supply and how effectively it’s used. The sharp dip in 2020 reflects the pandemic’s impact on domestic travel, followed by a strong rebound from 2021 onward.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 7: Airport Passenger Trends (Full Width) -->
+    <div class="pure-g">
+      <div class="pure-u-1-1" style="text-align: center;">
+        <div id="vis_airports" class="vis-container"></div>
+      </div>
+    </div>
+
+    <!-- ROW 8: Descriptive Text Below Airport Chart -->
+    <div class="pure-g">
+      <div class="pure-u-1">
+        <div class="description description-left">
+          <p>The chart above visualises annual passenger traffic at Australia’s major airports between 2015 and 2024. It highlights the sharp decline during the pandemic years, followed by a steady recovery across most airports. Sydney, Melbourne, and Brisbane have now returned to near pre-pandemic levels, while smaller airports such as Hobart and Canberra show slower but consistent growth. This trend reflects the broader rebound of domestic tourism and business travel across the country.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="pure-g">
+      <div class="pure-u-1 small-font">
+        <p>This dashboard was created using Vega-Lite and Pure.css as part of an academic visualisation project. Data
+          source: BITRE (2024).</p>
+      </div>
+    </div>
+
+  </div> <!-- /page -->
+
+  <!-- ================== Vega Embeds ================== -->
+  <script type="text/javascript">
+    const specRoutes = "./js/vg_routes..json";
+    const specRPT = "./js/vg_passangers_flight.json";
+    const specTraffic = "./js/vg_apk_load.json";
+    const specAirports = "./js/vg_airports..json";
+
+    vegaEmbed('#vis_routes', specRoutes, { "actions": false });
+    vegaEmbed('#vis_passangers_flight', specRPT, { "actions": false });
+    vegaEmbed('#vis_apk_load', specTraffic, { "actions": false });
+    vegaEmbed('#vis_airports', specAirports, { "actions": false });
+  </script>
+
+
+</body>
+</html>
