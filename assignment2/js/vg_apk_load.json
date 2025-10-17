@@ -132,7 +132,32 @@
           {"field": "Load_Factor", "title": "Load Factor (%)", "format": ".1f"}
         ]
       }
+    },
+    
+    {
+      "transform": [{"filter": "datum.Year == 2020"}],
+      "mark": {
+        "type": "text",
+        "text": [
+          "Load factor declned",
+          "amid passenger",
+          "distancing restrictions."
+        ],
+        "font": "Arial",
+        "fontSize": 12,
+        "fontWeight": "normal",
+        "color": "#333333",
+        "align": "left",
+        "baseline": "middle",
+        "dx": -28,
+        "dy": 0
+      },
+      "encoding": {
+        "x": {"field": "Year", "type": "ordinal"},   
+        "y": {"value": 65, "axis": null}                          
+      }
     }
+
   ],
 
   "resolve": {"scale": {"y": "independent"}},

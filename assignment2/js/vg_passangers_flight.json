@@ -147,7 +147,44 @@
           {"field": "Value", "title": "Value", "format": ".2f"}
         ]
       }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "text": [
+          "Sharp collapse in domestic travel due",
+          "to COVID-19 restrictions (−70% vs 2019)"
+        ],
+        "font": "Arial",
+        "fontWeight": 200,
+        "fontSize": 12,
+        "color": "#333333",
+        "align": "left",
+        "baseline": "middle",
+        "dx": -230,
+        "dy": 180,
+        "stroke": "white",
+        "strokeWidth": 1,
+        "strokeOpacity": 0.1
+      },
+      "encoding": {
+        "x": {"datum": 2020},
+        "y": {"datum": 280, "axis": null}
+      }
+    },
+    {
+      "mark": {
+        "type": "rule",
+        "stroke": "#999999",
+        "strokeDash": [4, 4],
+        "strokeWidth": 1
+      },
+      "encoding": {
+        "x": {"datum": 2020}
+      }
     }
+
+
   ],
   "resolve": {"scale": {"y": "independent"}},
   "config": {

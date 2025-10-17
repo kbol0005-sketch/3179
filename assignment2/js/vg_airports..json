@@ -5,7 +5,7 @@
   "height": 250,
 
   "title": {
-    "text": "Passenger Traffic by Major Australian Airports ",
+    "text": "Passenger Traffic by Major Australian Airports",
     "font": "Arial",
     "fontSize": 14,
     "fontWeight": "bold",
@@ -26,15 +26,16 @@
     {"calculate": "datum.Passengers / 1e6", "as": "Passengers_M"}
   ],
 
-  "mark": {
-    "type": "line",
-    "interpolate": "monotone",
-    "strokeWidth": 2,
-    "point": {"filled": true, "size": 40}
-  },
-
-  "encoding": {
-    "x": {
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "interpolate": "monotone",
+        "strokeWidth": 2,
+        "point": {"filled": true, "size": 40}
+      },
+      "encoding": {
+        "x": {
           "field": "Year",
           "type": "quantitative",
           "scale": {"domain": [2014.8, 2024.2], "nice": false},
@@ -50,54 +51,77 @@
             "grid": false
           }
         },
-
-    "y": {
-      "field": "Passengers_M",
-      "type": "quantitative",
-      "scale": {"domain": [0, 50]},
-      "axis": {
-        "title": "Passengers (millions)",
-        "values": [10, 20, 30, 40, 50],
-        "titleFontSize": 13,
-        "labelFontSize": 12,
-        "labelPadding": 6,
-        "titlePadding": 12,
-        "grid": true,
-        "gridColor": "#e0e0e0",
-        "domain": false
-      }
-    },
-
-    "color": {
-      "field": "Airport",
-      "type": "nominal",
-      "scale": {
-       "domain": [
-          "Sydney", "Melbourne", "Brisbane", "Perth",
-          "Adelaide", "Gold Coast", "Cairns", "Canberra", "Darwin", "Hobart"
-        ],
-        "range": [
-          "#1f78b4", "#f28e2b", "#9467bd", "#b15928",
-          "#8da0cb", "#ffd92f", "#fc8d62", "#66c2a5", "#a6cee3", "#bebada"
+        "y": {
+          "field": "Passengers_M",
+          "type": "quantitative",
+          "scale": {"domain": [0, 50]},
+          "axis": {
+            "title": "Passengers (millions)",
+            "values": [10, 20, 30, 40, 50],
+            "titleFontSize": 13,
+            "labelFontSize": 12,
+            "labelPadding": 6,
+            "titlePadding": 12,
+            "grid": true,
+            "gridColor": "#e0e0e0",
+            "domain": false
+          }
+        },
+        "color": {
+          "field": "Airport",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Sydney", "Melbourne", "Brisbane", "Perth",
+              "Adelaide", "Gold Coast", "Cairns", "Canberra", "Darwin", "Hobart"
+            ],
+            "range": [
+              "#1f78b4", "#f28e2b", "#9467bd", "#b15928",
+              "#8da0cb", "#ffd92f", "#fc8d62", "#66c2a5", "#a6cee3", "#bebada"
+            ]
+          },
+          "legend": {
+            "title": null,
+            "orient": "right",
+            "direction": "vertical",
+            "labelFontSize": 12,
+            "symbolSize": 250,
+            "symbolStrokeWidth": 2,
+            "padding": 10
+          }
+        },
+        "tooltip": [
+          {"field": "Airport", "title": "Airport"},
+          {"field": "Year", "title": "Year", "format": "d"},
+          {"field": "Passengers", "title": "Passengers", "format": ",.0f"}
         ]
-      },
-      "legend": {
-        "title": null,
-        "orient": "right",
-        "direction": "vertical",
-        "labelFontSize": 12,
-        "symbolSize": 250,
-        "symbolStrokeWidth": 2,
-        "padding": 10
       }
     },
-    "tooltip": [
-      {"field": "Airport", "title": "Airport"},
-      {"field": "Year", "title": "Year", "format": "d"},
-      {"field": "Passengers", "title": "Passengers", "format": ",.0f"}
-    ]
 
-  },
+    {
+      "mark": {
+        "type": "text",
+        "text": [
+          "Major hubs yet to return to",
+          "2019 passenger levels."
+        ],
+        "font": "Arial",
+        "fontSize": 12,
+        "fontWeight": "normal",
+        "color": "#333333",
+        "align": "left",
+        "baseline": "middle",
+        "dx": -180,
+        "stroke": "white",
+        "strokeWidth": 1,
+        "strokeOpacity": 0.1
+      },
+      "encoding": {
+        "x": {"datum": 2024},
+        "y": {"datum": 46}
+      }
+    }
+  ],
 
   "config": {
     "background": "white",
@@ -109,4 +133,3 @@
     }
   }
 }
-
