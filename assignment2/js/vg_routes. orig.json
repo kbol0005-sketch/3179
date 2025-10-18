@@ -41,10 +41,8 @@
             "select": {
               "type": "point", 
               "fields": ["city_pair"], 
-              "on": "click[event.item && event.item.datum && event.item.datum.city_pair]", 
-              "clear": "dblclick"
-            },
-            "bind": "scales"
+              "on": "click"
+            }
           }
         ],
         "data": {
@@ -337,144 +335,102 @@
     ]
     },
 
-    {
-    "hconcat": [
-      {
-        "width": 40,
-        "mark": {"type": "rect", "opacity": 0},
-        "data": {"values": [{}]}
-      },
-      {
-        "width": 600,
-        "height": 170,
-        "data": {"url": "./data/routes_history.csv"},
-        "layer": [
-          {
-            "transform": [{"filter": {"param": "routeSelect"}}],
-            "mark": {
-              "type": "text",
-              "color": "#333333",
-              "font": "Arial",
-              "fontSize": 14,
-              "fontWeight": "bold",
-              "align": "center",
-              "y": -10
+
+ {
+      "hconcat": [
+        {
+          "width": 40,
+          "mark": {"type": "rect", "opacity": 0},   
+          "data": {"values": [{}]}
+        }, 
+        {
+          "title": {
+          "text": "Passenger Traffic by Year",
+          "color": "#333333",          
+          "font": "Arial",
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "anchor": "middle",
+          "offset": 10
+        },
+          "width": 600,
+          "height": 170,
+          "data": {"url": "./data/routes_history.csv"},
+          "transform": [
+            {
+              "fold": [
+                "2024","2023","2022","2021","2020",
+                "2019","2018","2017","2016","2015"
+              ],
+              "as": ["year", "passengers"]
             },
-            "encoding": {
-              "text": {"field": "city_pair"},
-              "opacity": {
-                "condition": {
-                  "param": "routeSelect",
-                  "empty": false,
-                  "value": 1
-                },
-                "value": 0
-              }
+            {"calculate": "replace(datum.passengers, ',', '')", "as": "passengers_clean"},
+            {"calculate": "toNumber(datum.passengers_clean)", "as": "passengers_num"},
+            {"calculate": "datum.passengers_num / 1000", "as": "passengers_thousands"},
+            {"filter": {"param": "routeSelect"}},
+            {
+              "aggregate": [
+                {"op": "sum", "field": "passengers_thousands", "as": "total_passengers"},
+                {"op": "sum", "field": "passengers_num", "as": "total_passengers_raw"} 
+              ],
+              "groupby": ["year"]
             }
-          },
-          {
-            "transform": [{"filter": {"param": "routeSelect"}}],
-            "mark": {
-              "type": "text",
-              "color": "#333333",
-              "font": "Arial",
-              "fontSize": 14,
-              "fontWeight": "bold",
-              "align": "center",
-              "y": -10
+          ],
+          "mark": {"type": "bar", "cornerRadiusEnd": 2, "width":40},
+          "encoding": {
+            "x": {
+              "field": "year",
+              "type": "ordinal",
+              "sort": "descending",
+              "axis": {
+                "title": null,
+                "labelAngle": 0,
+                "labelFontSize": 12,
+                "labelColor": "#333333",
+                "labelPadding": 6,
+                "grid": false,
+                "domain": true,
+                "domainColor": "#555",
+                "domainWidth": 1,
+                "ticks": false
+              }
             },
-             "data": {"values": [{"dummy": 1}]},
-            "encoding": {
-              "text": {"value": "Total Domestic Passenger Traffic"},
-              "opacity": {
-                "condition": {
-                  "param": "routeSelect",
-                  "empty": false,
-                  "value": 0
-                },
-                "value": 1
-              }
-            }
-          },
-          {
-            "transform": [
-              {
-                "fold": [
-                  "2024", "2023", "2022", "2021", "2020",
-                  "2019", "2018", "2017", "2016", "2015"
-                ],
-                "as": ["year", "passengers"]
+            "y": {
+              "field": "total_passengers",
+              "type": "quantitative",
+              "axis": {
+                "title": "Passengers (000s)",
+                "titleColor": "#555555",
+                "titlePadding": 10,
+                "titleFontSize": 13,
+                "labelFontSize": 12,
+                "labelColor": "#333333",
+                "labelPadding": 6,
+                "grid": true,
+                "gridColor": "#efefef",
+                "domain": false,
+                "format": ",.0f",
+                "ticks": false
               },
-              {"calculate": "replace(datum.passengers, ',', '')", "as": "passengers_clean"},
-              {"calculate": "toNumber(datum.passengers_clean)", "as": "passengers_num"},
-              {"calculate": "datum.passengers_num / 1000", "as": "passengers_thousands"},
-              {"filter": {"param": "routeSelect"}},
-              {
-                "aggregate": [
-                  {"op": "sum", "field": "passengers_thousands", "as": "total_passengers"},
-                  {"op": "sum", "field": "passengers_num", "as": "total_passengers_raw"}
-                ],
-                "groupby": ["year"]
-              }
-            ],
-            "mark": {"type": "bar", "cornerRadiusEnd": 2, "width": 40},
-            "encoding": {
-              "x": {
-                "field": "year",
-                "type": "ordinal",
-                "sort": "descending",
-                "axis": {
-                  "title": null,
-                  "labelAngle": 0,
-                  "labelFontSize": 12,
-                  "labelColor": "#333333",
-                  "labelPadding": 6,
-                  "grid": false,
-                  "domain": true,
-                  "domainColor": "#555",
-                  "domainWidth": 1,
-                  "ticks": false
+              "scale": {"nice": true}
+            },
+            "color": {
+              "condition": [
+                {
+                  "test": "datum.year == '2024' || datum.year == '2019'",
+                  "value": "#f4a582"
                 }
-              },
-              "y": {
-                "field": "total_passengers",
-                "type": "quantitative",
-                "axis": {
-                  "title": "Passengers (000s)",
-                  "titleColor": "#555555",
-                  "titlePadding": 10,
-                  "titleFontSize": 13,
-                  "labelFontSize": 12,
-                  "labelColor": "#333333",
-                  "labelPadding": 6,
-                  "grid": true,
-                  "gridColor": "#efefef",
-                  "domain": false,
-                  "format": ",.0f",
-                  "ticks": false
-                },
-                "scale": {"nice": true}
-              },
-              "color": {
-                "condition": [
-                  {"test": "datum.year == '2024' || datum.year == '2019'", "value": "#f4a582"}
-                ],
-                "value": "#3182bd"
-              },
-              "tooltip": [
-                {"field": "year", "title": "Year"},
-                {"field": "total_passengers_raw", "title": "Passengers", "format": ",.0f"}
-              ]
-            }
+              ],
+              "value": "#3182bd"
+            },
+            "tooltip": [
+              {"field": "year", "title": "Year"},
+              {"field": "total_passengers_raw", "title": "Passengers", "format": ",.0f"}
+            ]
           }
-        ]
-      }
-    ]
-  }
-
-
-
-
+        }
+      ]
+    }
 
   ],
   
